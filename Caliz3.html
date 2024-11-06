@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cotización de Cortinas</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #eaf2f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+        h1 {
+            color: #4a90e2;
+            text-align: center;
+        }
+        #cotizacionForm {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+            max-width: 350px;
+            text-align: center;
+            margin-top: 20px;
+        }
+        label {
+            color: #4a90e2;
+            font-weight: bold;
+            display: block;
+            margin: 10px 0 5px;
+        }
+        input[type="number"],
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 15px;
+            border: 2px solid #4a90e2;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: center;
+        }
+        button {
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 5px;
+        }
+        #cotizarBtn {
+            background-color: #4a90e2;
+        }
+        #cotizarBtn:hover {
+            background-color: #357ab8;
+        }
+        #guardarBtn {
+            background-color: #28a745;
+        }
+        #guardarBtn:hover {
+            background-color: #218838;
+        }
+        #nuevaCotizacionBtn {
+            background-color: #f39c12;
+        }
+        #nuevaCotizacionBtn:hover {
+            background-color: #e67e22;
+        }
+        #borrarTodoBtn {
+            background-color: #e74c3c;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        #borrarTodoBtn:hover {
+            background-color: #c0392b;
+        }
+        h2 {
+            color: #333;
+        }
+        #resultado, #cotizacionesGuardadas {
+            font-size: 18px;
+            color: #333;
+            background-color: #e6f7ff;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            font-weight: bold;
+            text-align: left;
+        }
+        .cotizacion {
+            background-color: #f7fafc;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .borrarBtn {
+            background-color: transparent;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 18px;
+        }
+        .borrarBtn:hover {
+            color: #c0392b;
+        }
+        .trashIcon {
+            font-size: 20px;
+        }
+        /* Colores adicionales */
+        .cotizacion:nth-child(odd) {
+            background-color: #f1f9f5;
+        }
+        .cotizacion:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        #cotizacionesGuardadas {
+            background-color: #f4f8fb;
+            border-radius: 5px;
+            padding: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div id="cotizacionForm">
+        <h1>Cotización de Cortinas</h1>
+
+        <label for="nombre">Nombre de la opción:</label>
+        <input type="text" id="nombre" placeholder="Ejemplo: Sala principal" required>
+
+        <label for="ancho">Ancho de la ventana (metros):</label>
+        <input type="number" id="ancho" step="0.01" required>
+
+        <label for="alto">Altura de la ventana (metros):</label>
+        <input type="number" id="alto" step="0.01" required>
+
+        <button type="button" id="cotizarBtn" onclick="cotizar()">Cotizar</button>
+        <button type="button" id="guardarBtn" onclick="guardarCotizacion()" style="display: none;">Guardar Cotización</button>
+        <button type="button" id="nuevaCotizacionBtn" onclick="nuevaCotizacion()" style="display: none;">Nueva Cotización</button>
+
+        <h2>Resultado</h2>
+        <p id="resultado"></p>
+
+        <h2>Cotizaciones Guardadas</h2>
+        <div id="cotizacionesGuardadas"></div>
+
+        <button type="button" id="borrarTodoBtn" onclick="borrarTodo()">
+            <span class="trashIcon">&#128465;</span> Borrar todo
+        </button>
+    </div>
+
+    <script>
+        let cotizaciones = [];
+        let cotizacionActual = null;
+
+        function cotizar() {
+            // Obtener valores de ancho, altura y nombre de la opción
+            const nombre = document.getElementById("nombre").value.trim();
+            const ancho = parseFloat(document.getElementById("ancho").value);
+            const alto = parseFloat(document.getElementById("alto").value);
+
+            // Validación de entradas
+            if (nombre === "" || isNaN(ancho) || isNaN(alto) || ancho <= 0 || alto <= 0) {
+                document.getElementById("resultado").innerText = "Por favor, completa todos los campos con valores válidos.";
+                return;
+            }
+
+            // Calcular el número de lienzos
+            const lienzos = Math.ceil((ancho * 2.5) / 1.4);
+
+            // Calcular total de metros
+            const totalMetros = lienzos * alto;
+
+            // Mostrar el resultado en el apartado de resultado
+            document.getElementById("resultado").innerText = 
+                `Número de lienzos: ${lienzos}\nTotal de metros para comprar: ${totalMetros.toFixed(2)} m`;
+
+            // Guardar la cotización en una variable temporal
+            cotizacionActual = { nombre, lienzos, totalMetros };
+
+            // Mostrar el botón "Guardar Cotización" y "Nueva Cotización"
+            document.getElementById("guardarBtn").style.display = "inline-block";
+            document.getElementById("nuevaCotizacionBtn").style.display = "inline-block";
+        }
+
+        function guardarCotizacion() {
+            // Verificar si hay una cotización actual para guardar
+            if (cotizacionActual === null) {
+                document.getElementById("resultado").innerText = "Primero realiza una cotización antes de guardar.";
+                return;
+            }
+
+            // Guardar la cotización en el array de cotizaciones
+            cotizaciones.push(cotizacionActual);
+
+            // Guardar la cotización en el apartado de cotizaciones guardadas
+            const cotizacionesDiv = document.getElementById("cotizacionesGuardadas");
+            const cotizacion = document.createElement("div");
+            cotizacion.className = "cotizacion";
+            cotizacion.innerHTML = `${cotizacionActual.nombre}: ${cotizacionActual.lienzos} lienzos, ${cotizacionActual.totalMetros.toFixed(2)} m 
+                                    <button class="borrarBtn" onclick="borrarCotizacion(this)">x</button>`;
+
+            // Agregar la nueva cotización al listado
+            cotizacionesDiv.appendChild(cotizacion);
+
+            // Limpiar los campos de entrada y ocultar el botón de guardar
+            document.getElementById("nombre").value = "";
+            document.getElementById("ancho").value = "";
+            document.getElementById("alto").value = "";
+            document.getElementById("resultado").innerText = "";
+            document.getElementById("guardarBtn").style.display = "none";
+            document.getElementById("nuevaCotizacionBtn").style.display = "none";
+
+            // Ocultar el botón "Guardar Cotización"
+            cotizacionActual = null;
+        }
+
+        function borrarCotizacion(button) {
+            // Eliminar la cotización correspondiente
+            const cotizacion = button.parentElement;
+            cotizacion.remove();
+
+            // Eliminar la cotización del array
+            const index = Array.from(cotizacion.parentElement.children).indexOf(cotizacion);
+            cotizaciones.splice(index, 1);
+        }
+
+        function borrarTodo() {
+            // Limpiar todas las cotizaciones guardadas
+            const cotizacionesDiv = document.getElementById("cotizacionesGuardadas");
+            cotizacionesDiv.innerHTML = "";
+            cotizaciones = [];
+        }
+
+        function nuevaCotizacion() {
+            // Limpiar los campos y resultados para comenzar una nueva cotización
+            document.getElementById("nombre").value = "";
+            document.getElementById("ancho").value = "";
+            document.getElementById("alto").value = "";
+            document.getElementById("resultado").innerText = "";
+            document.getElementById("guardarBtn").style.display = "none";
+            document.getElementById("nuevaCotizacionBtn").style.display = "none";
+            cotizacionActual = null;
+        }
+    </script>
+</body>
+</html>
